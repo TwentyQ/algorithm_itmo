@@ -2,7 +2,6 @@ import sys
 
 mod = 1000000007
 mul = 31
-
 cap = 8
 tab = [[] for _ in range(cap)]
 cnt = 0
