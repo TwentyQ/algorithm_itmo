@@ -1,0 +1,81 @@
+import sys
+
+mod = 1000000007
+mul = 31
+cap = 8
+tab = [[] for _ in range(cap)]
+cnt = 0
+
+def h(s):
+    r = 0
+    for ch in s:
+        r = (r * mul + ord(ch)) % mod
+    return r
+
+def grow():
+    global cap, tab
+    old = tab
+    cap *= 2
+    tab = [[] for _ in range(cap)]
+    for chain in old:
+        for k, v in chain:
+            tab[h(k) % cap].append([k, v])
+
+def put(k, v):
+    global cnt
+    i = h(k) % cap
+    for e in tab[i]:
+        if e[0] == k:
+            e[1] = v
+            return
+    tab[i].append([k, v])
+    cnt += 1
+    if cnt / cap > 0.75:
+        grow()
+
+def get(k):
+    i = h(k) % cap
+    for e in tab[i]:
+        if e[0] == k:
+            return e[1]
+    return None
+
+def delete(k):
+    global cnt
+    i = h(k) % cap
+    chain = tab[i]
+    for j in range(len(chain)):
+        if chain[j][0] == k:
+            v = chain[j][1]
+            chain.pop(j)
+            cnt -= 1
+            return v
+    return None
+
+data = sys.stdin.read().split()
+q = int(data[0])
+pos = 1
+
+for i in range(q):
+    text = data[pos]
+    pos += 1
+
+    if text == "put":
+        put(data[pos], int(data[pos + 1]))
+        pos += 2
+    elif text == "get":
+        r = get(data[pos])
+        pos += 1
+        if r is None:
+            print("Error")
+        else:
+            print(r)
+    elif text == "del":
+        r = delete(data[pos])
+        pos += 1
+        if r is None:
+            print("Error")
+        else:
+            print(r)
+    elif text == "size":
+        print(cnt)
